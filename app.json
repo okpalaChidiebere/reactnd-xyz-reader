@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "reactnd-xyz-reader",
+    "slug": "reactnd-xyz-reader",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "reactnd-xyz-reader"
+}
