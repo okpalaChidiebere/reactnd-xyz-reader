@@ -24,6 +24,7 @@ project.xcworkspace
 
 # Android/IntelliJ
 #
+google-services.json
 build/
 .idea
 .gradle
@@ -52,3 +53,6 @@ buck-out/
 # Expo
 .expo/
 web-build/
+
+#iOS
+GoogleService-Info.plist

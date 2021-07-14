@@ -1,0 +1,6 @@
+export const photo_placeholder = "#ccc"
+export const theme_primary = "#9E9E9E"
+export const theme_primary_dark = "#616161"
+export const theme_accent = "#04561A"
+export const ltgray = "#ffe0e0e0"
+export const white = "#fff"
