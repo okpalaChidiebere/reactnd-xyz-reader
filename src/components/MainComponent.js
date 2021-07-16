@@ -69,7 +69,8 @@ export default function MainComponent(){
             + item[ItemsColumns.AUTHOR]
 
         return(
-            <ListItemArticle 
+            <ListItemArticle
+                delay={index%6}
                 title={item[ItemsColumns.TITLE]}
                 subtitle={subtitle}
                 imageSource={item[ItemsColumns.THUMB_URL]}
