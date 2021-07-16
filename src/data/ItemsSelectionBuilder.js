@@ -1,5 +1,7 @@
 import db, { ItemsColumns, ITEMS } from "./ItemsDatabase"
 
+//https://www.sqlite.org/queryplanner.html
+
 /**
 * Execute query using the current internal state as {@code WHERE} clause.
 */
@@ -49,44 +51,48 @@ export function deleteArticlesData(selection = null){
 }
 
 export function bulkInsertWeatherData(articleJsonStr){
+    return new Promise(async (resolve, reject) => {
 
-     // is text empty?
-    if (!articleJsonStr) {
-        return
-    }
-
-    let values = [], bigqery = ""
-    for(const index in articleJsonStr){
-
-        let { id, title, author, body, thumb, photo, aspect_ratio, published_date } = articleJsonStr[index]
-
-        values.push(id, author, title, body, thumb, photo, aspect_ratio, published_date)
-        bigqery += `(?,?,?,?,?,?,?,?)${articleJsonStr.length-1 != index?`,`:``}`
-    }
-
-    const SQL_BULK_INSERT = "INSERT INTO "+ITEMS
-        + " ("
-        + ItemsColumns.SERVER_ID + ","
-        + ItemsColumns.AUTHOR + ","
-        + ItemsColumns.TITLE + ","
-        + ItemsColumns.BODY + ","
-        + ItemsColumns.THUMB_URL + ","
-        + ItemsColumns.PHOTO_URL + ","
-        + ItemsColumns.ASPECT_RATIO + ","
-        + ItemsColumns.PUBLISHED_DATE + ") "
-        + "VALUES "
-        + bigqery + ";"
-  
-    db.transaction(
-        (tx) => {
-            tx.executeSql(
-                SQL_BULK_INSERT, 
-                values,
-            )
-        },
-        (e) => {
-        console.log("ERROR: " + e.message)
+         // is text empty?
+        if (!articleJsonStr) {
+            return
         }
-    )
+
+        let values = [], bigqery = ""
+        for(const index in articleJsonStr){
+
+            let { id, title, author, body, thumb, photo, aspect_ratio, published_date } = articleJsonStr[index]
+
+            values.push(id, author, title, body, thumb, photo, aspect_ratio, published_date)
+            bigqery += `(?,?,?,?,?,?,?,?)${articleJsonStr.length-1 != index?`,`:``}`
+        }
+
+        const SQL_BULK_INSERT = "INSERT INTO "+ITEMS
+            + " ("
+            + ItemsColumns.SERVER_ID + ","
+            + ItemsColumns.AUTHOR + ","
+            + ItemsColumns.TITLE + ","
+            + ItemsColumns.BODY + ","
+            + ItemsColumns.THUMB_URL + ","
+            + ItemsColumns.PHOTO_URL + ","
+            + ItemsColumns.ASPECT_RATIO + ","
+            + ItemsColumns.PUBLISHED_DATE + ") "
+            + "VALUES "
+            + bigqery + ";"
+    
+        db.transaction(
+            (tx) => {
+                tx.executeSql(
+                    SQL_BULK_INSERT, 
+                    values,
+                    (_, { rowsAffected }) => resolve(rowsAffected)
+                )
+            },
+            (e) => {
+                console.log("ERROR: " + e.message)
+                reject("ERROR: " + e.message)
+            }
+        )
+    })
 
 }
