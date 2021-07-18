@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react"
-import { Text, View, Animated, useWindowDimensions } from "react-native"
+import { Text, View, Animated, useWindowDimensions, Pressable } from "react-native"
 import { RFValue } from "react-native-responsive-fontsize" //helps our fontSoze scale regardless of the screenSize
 import DynamicHeightNetworkImage from "./DynamicHeightNetworkImage"
 import { white } from "../values/colors"
 
-export default function ListItemArticle({ title, subtitle, imageSource, imageAspectRation, delay }){
+export default function ListItemArticle({ title, subtitle, imageSource, imageAspectRation, delay, onPress }){
 
     const animatedItem = useRef(new Animated.Value(0)).current
     
@@ -30,12 +30,14 @@ export default function ListItemArticle({ title, subtitle, imageSource, imageAsp
     }, [])
 
     return (
-        <Animated.View style={{ flex: 1, flexDirection:"column", margin: 10, backgroundColor: white, ...animatedItemStyle, }}>
-            <DynamicHeightNetworkImage source={{uri: imageSource}}/>
-            <View style={{ paddingHorizontal: 10, paddingVertical: 16 }}>
-                <Text numberOfLines={4} style={{ fontSize: RFValue(16) }}>{title}</Text>
-                <Text numberOfLines={2} style={{ width:"100%", color:"#757575", fontSize: RFValue(14) }}>{subtitle}</Text>
-            </View>
-        </Animated.View>
+        <Pressable onPress={onPress} style={{ flex: 1}}>
+            <Animated.View style={{ flex: 1, flexDirection:"column", margin: 10, backgroundColor: white, ...animatedItemStyle, }}>
+                <DynamicHeightNetworkImage source={{uri: imageSource}}/>
+                <View style={{ paddingHorizontal: 10, paddingVertical: 16 }}>
+                    <Text numberOfLines={4} style={{ fontSize: RFValue(16) }}>{title}</Text>
+                    <Text numberOfLines={2} style={{ width:"100%", color:"#757575", fontSize: RFValue(14) }}>{subtitle}</Text>
+                </View>
+            </Animated.View>
+        </Pressable>
     )
 }

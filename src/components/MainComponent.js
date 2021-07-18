@@ -3,7 +3,7 @@ import { View, FlatList }  from "react-native"
 import { useTheme } from "@react-navigation/native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import moment from "moment"
-import { app_name } from "../values/strings"
+import { app_name, component_article_detail } from "../values/strings"
 import { theme_primary, white } from "../values/colors"
 import { startImmediateSync } from "../data/ItemsSync"
 import db, { ItemsColumns } from "../data/ItemsDatabase"
@@ -18,7 +18,7 @@ const initialState = {
     isLoading: false,
 }
 
-export default function MainComponent(){
+export default function MainComponent({ route, navigation }){
     const { screenContainer } = useTheme()
     const [state, setState] = useState(initialState)
 
@@ -70,6 +70,7 @@ export default function MainComponent(){
 
         return(
             <ListItemArticle
+                onPress={() => navigation.navigate(component_article_detail, { itemId: index, article: item })}
                 delay={index%6}
                 title={item[ItemsColumns.TITLE]}
                 subtitle={subtitle}
