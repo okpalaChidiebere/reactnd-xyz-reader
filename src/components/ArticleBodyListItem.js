@@ -1,5 +1,5 @@
 import React from "react"
-import { View, Text } from "react-native"
+import { Text } from "react-native"
 import { RFValue } from "react-native-responsive-fontsize"
 import { colorPrimaryText, theme_accent } from "../values/colors"
 
@@ -11,6 +11,7 @@ const ArticleBodyListItem = React.memo(function ArticleBodyListItem({ line }) {
                     lineHeight: 40, 
                     color: colorPrimaryText,
                     alignSelf: 'flex-start',
+                    fontFamily: "RosarioRegular",
                 }}
                 selectable
                 selectionColor={theme_accent}

@@ -1,7 +1,9 @@
 import { StatusBar } from "expo-status-bar"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { NavigationContainer } from "@react-navigation/native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
+import AppLoading from "expo-app-loading"
+import * as Font from "expo-font"
 import MyTheme from "./values/styles"
 import { theme_primary_dark } from "./values/colors"
 import MainNavigator from "./MainNavigator"
@@ -10,6 +12,7 @@ import { startImmediateSync } from "./data/ItemsSync"
 
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -17,11 +20,22 @@ export default function App() {
         
         createItemsTable(db)
         await startImmediateSync()
+        await Font.loadAsync({
+          // Load a font `Rosario-Regular`. downloaded from https://fonts.google.com/
+          RosarioRegular: require("./assets/fonts/Rosario-Regular.ttf")
+        })
       }catch(e){
         console.warn("Error From NetworkFetch: ", e)
+      }finally{
+        // Tell the application to render
+        setAppIsReady(true)
       }
     })()
   }, [])
+
+  if (!appIsReady) {
+    return <AppLoading />
+  }
 
   return (
     <SafeAreaProvider>

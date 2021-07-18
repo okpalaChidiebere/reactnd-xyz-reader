@@ -34,8 +34,8 @@ export default function ListItemArticle({ title, subtitle, imageSource, imageAsp
             <Animated.View style={{ flex: 1, flexDirection:"column", margin: 10, backgroundColor: white, ...animatedItemStyle, }}>
                 <DynamicHeightNetworkImage source={{uri: imageSource}}/>
                 <View style={{ paddingHorizontal: 10, paddingVertical: 16 }}>
-                    <Text numberOfLines={4} style={{ fontSize: RFValue(16) }}>{title}</Text>
-                    <Text numberOfLines={2} style={{ width:"100%", color:"#757575", fontSize: RFValue(14) }}>{subtitle}</Text>
+                    <Text numberOfLines={4} style={{ fontSize: RFValue(16), fontFamily: "RosarioRegular" }}>{title}</Text>
+                    <Text numberOfLines={2} style={{ width:"100%", color:"#757575", fontSize: RFValue(14), fontFamily: "RosarioRegular" }}>{subtitle}</Text>
                 </View>
             </Animated.View>
         </Pressable>
