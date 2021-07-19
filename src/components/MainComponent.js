@@ -3,35 +3,36 @@ import { View, FlatList }  from "react-native"
 import { useTheme } from "@react-navigation/native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import moment from "moment"
+import { connect } from "react-redux"
 import { app_name, component_article_detail } from "../values/strings"
 import { theme_primary, white } from "../values/colors"
 import { startImmediateSync } from "../data/ItemsSync"
 import db, { ItemsColumns } from "../data/ItemsDatabase"
 import { loadAllArticles } from "../data/ItemsSelectionBuilder"
 import ListItemArticle from "./ListItemArticle"
+import { receiveArticles } from "../actions"
 
 
 const TAG = "MainComponent"
 
-const initialState = {
-    articles: [],
-    isLoading: false,
-}
-
-export default function MainComponent({ route, navigation }){
+function MainComponent({ route, navigation, articleItems, dispatch }){
     const { screenContainer } = useTheme()
-    const [state, setState] = useState(initialState)
+    const [isRefreshing, setRefreshing] = useState(false)
+
+    const updateRefreshingUI = () => {
+        setRefreshing(false)
+    }
+
+    const receiveNewArticlesItems = async() => {
+        setRefreshing(true)
+        const newData = await loadAllArticles(db)
+        dispatch(receiveArticles(newData))
+    }
 
     useEffect(() => {
         (async () => {
-            setState({
-                isLoading: true,
-            })
-            const newData = await loadAllArticles(db)
-            setState({
-                articles: newData,
-                isLoading: false,
-            })
+            await receiveNewArticlesItems()
+            updateRefreshingUI()
         })()
     }, [])
 
@@ -40,26 +41,13 @@ export default function MainComponent({ route, navigation }){
          * More ways to implment this logic
          * https://medium.com/enappd/refreshcontrol-pull-to-refresh-in-react-native-apps-dfe779118f75
          */
-
-        setState(previousSate => ({
-            ...previousSate,
-            isLoading: true,
-        }))
-
        try{
             await startImmediateSync()
-            const newData = await loadAllArticles(db)
-            setState(previousSate => ({
-                ...previousSate,
-                articles: newData,
-            }))
+            await receiveNewArticlesItems()
         }catch(e){
             console.warn(TAG ,"Error From NetworkFetch: ", e)
         }finally{
-            setState(previousSate => ({
-                ...previousSate,
-                isLoading: false,
-            }))
+            updateRefreshingUI()
         }
     }
 
@@ -80,15 +68,14 @@ export default function MainComponent({ route, navigation }){
         )
     }
 
-    const { isLoading, articles } = state
     return (
         <SafeAreaView style={screenContainer} edges={["bottom", "left", "right"]}>
             <View style={[screenContainer, { backgroundColor: "#EEEEEE"}]}>
                 <FlatList
-                    data={articles}
+                    data={articleItems}
                     renderItem={renderItem} 
-                    refreshing={isLoading}
-                    extraData={articles}
+                    refreshing={isRefreshing}
+                    extraData={articleItems}
                     onRefresh={refresh}
                     numColumns={2}
                     keyExtractor={item => item[ItemsColumns._ID]}
@@ -97,6 +84,15 @@ export default function MainComponent({ route, navigation }){
         </SafeAreaView>
     )
 }
+
+function mapStateToProps (articleItems) {
+    return {
+        articleItems
+    }
+}
+
+const connectedMainComponent = connect(mapStateToProps)
+export default connectedMainComponent(MainComponent)
 
 export function MainComponentOptions(){
     return {

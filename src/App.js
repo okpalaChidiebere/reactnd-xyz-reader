@@ -4,6 +4,8 @@ import { NavigationContainer } from "@react-navigation/native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import AppLoading from "expo-app-loading"
 import * as Font from "expo-font"
+import { Provider as StoreProvider } from "react-redux"
+import store from "./store/configureStore"
 import MyTheme from "./values/styles"
 import { theme_primary_dark } from "./values/colors"
 import MainNavigator from "./MainNavigator"
@@ -39,10 +41,12 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer theme={MyTheme}>
-        <StatusBar style="light" backgroundColor={theme_primary_dark}/>
-        <MainNavigator />
-      </NavigationContainer>
+      <StoreProvider store={store}>
+        <NavigationContainer theme={MyTheme}>
+          <StatusBar style="light" backgroundColor={theme_primary_dark}/>
+          <MainNavigator />
+        </NavigationContainer>
+      </StoreProvider>
     </SafeAreaProvider>
   )
 }
