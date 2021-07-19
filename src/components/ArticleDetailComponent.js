@@ -1,6 +1,7 @@
 import React from "react"
 import { View, StyleSheet, Text } from "react-native"
 import { useTheme } from "@react-navigation/native"
+import { TransitionPresets } from "@react-navigation/stack"
 import { SafeAreaView } from "react-native-safe-area-context"
 import PagerView from "react-native-pager-view"
 import { connect } from "react-redux"
@@ -58,5 +59,11 @@ const styles = StyleSheet.create({
 export function ArticleDetailComponentOptions({ route, navigation }){
     return {
         headerShown: false,
+        /**
+         * Define Component Screen Transition; how we want this screen to appear in UI when navigated to
+         * learn more here https://reactnavigation.org/docs/stack-navigator/#animations
+         * https://www.youtube.com/watch?v=PvjV96CNPqM
+         */
+        ...TransitionPresets.ModalSlideFromBottomIOS,
     }
 }
