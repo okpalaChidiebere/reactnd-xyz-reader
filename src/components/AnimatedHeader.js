@@ -6,6 +6,8 @@ import AnimatedSubtitle from "./AnimatedSubtitle"
 import AnimatedText from "./AnimatedTitle"
 import { white } from "../values/colors"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import * as RootNavigation from "../utils/navigationUtils"
+import { component_main } from "../values/strings"
 
 
 export default function TopNavigation ({ title, subtitle, scrollY, uri }){
@@ -49,7 +51,7 @@ export default function TopNavigation ({ title, subtitle, scrollY, uri }){
         translucent
       />
       <View style={[styles.iconBackButton, { marginTop: Platform.OS === "ios" ? safeArea.top : safeArea.top + 10}]}>
-        <Pressable onPress={() => console.log("here")}>
+        <Pressable onPress={() => RootNavigation.navigate(component_main)}>
           <Icon
             name={Platform.OS === "android" ? "arrow-back" : "chevron-back"}
             size={icon_size} color={white} />

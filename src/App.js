@@ -11,6 +11,7 @@ import { theme_primary_dark } from "./values/colors"
 import MainNavigator from "./MainNavigator"
 import db, { createItemsTable } from "./data/ItemsDatabase"
 import { startImmediateSync } from "./data/ItemsSync"
+import { navigationRef } from "./utils/navigationUtils"
 
 
 export default function App() {
@@ -42,7 +43,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StoreProvider store={store}>
-        <NavigationContainer theme={MyTheme}>
+        <NavigationContainer ref={navigationRef} theme={MyTheme}>
           <StatusBar style="light" backgroundColor={theme_primary_dark}/>
           <MainNavigator />
         </NavigationContainer>
