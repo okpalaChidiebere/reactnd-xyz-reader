@@ -2,13 +2,14 @@ import React from "react"
 import { Text } from "react-native"
 import { RFValue } from "react-native-responsive-fontsize"
 import { colorPrimaryText, theme_accent } from "../values/colors"
+import { detail_article_body_line_height } from "../values/dimens"
 
 const ArticleBodyListItem = React.memo(function ArticleBodyListItem({ line }) {
     return (
         
             <Text style={{
                     fontSize: RFValue(12),
-                    lineHeight: 40, 
+                    lineHeight: detail_article_body_line_height, 
                     color: colorPrimaryText,
                     alignSelf: 'flex-start',
                     fontFamily: "RosarioRegular",

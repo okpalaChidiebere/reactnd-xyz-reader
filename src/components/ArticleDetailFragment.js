@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react"
-import { View, StyleSheet, ActivityIndicator, Dimensions, Animated, Text } from "react-native"
+import { View, StyleSheet, ActivityIndicator, Dimensions, Animated } from "react-native"
 import moment from "moment"
 import { white } from "../values/colors"
 import { ItemsColumns } from "../data/ItemsDatabase"
 import ArticleBodyListItem from "./ArticleBodyListItem"
 import AnimatedHeader from "./AnimatedHeader"
-import { detail_banner_height } from "../values/dimens"
+import { detail_article_body_padding_left, detail_article_body_padding_right, 
+    detail_article_body_vertical_margin, detail_banner_height } from "../values/dimens"
 
 
 export default function ArticleDetailFragment({ article }){
@@ -86,46 +87,46 @@ export default function ArticleDetailFragment({ article }){
         <View style={[ styles.container ]}>
             <AnimatedHeader scrollY={scrollY} title={article[ItemsColumns.TITLE]} subtitle={subtitle} uri={article[ItemsColumns.PHOTO_URL]} />
             <Animated.View style={animatedStyle.articleBody(scrollY)}>
-            <Animated.FlatList
-                data={dataSource}
-                extraData={dataSource}
-                keyExtractor={(_, k) => k.toString()}
-                onEndReached={getData}
-                ListFooterComponent={renderFooter}
-                showsVerticalScrollIndicator={false}
-                renderItem={renderItem}
-                ListHeaderComponent={renderHeader}
-                /**
-                 * we bind the animated value to the ScrollView scroll position. 
-                 * To do that we use an Animated.event with a mapping to the event object 
-                 * property that we want to bind to the animated value.
-                 * In this case it is <eventObject>.nativeEvent.contentOffset.y
-                 * 
-                 * https://medium.com/appandflow/react-native-scrollview-animated-header-10a18cb9469e
-                 */
-                onScroll={Animated.event(
-                    [{nativeEvent: {contentOffset: {y: scrollY}}}],
-                    {
-                        useNativeDriver: true, //this makes the animation calulation a lot faster, but you can directly animate the layout anymore. This means you cant directly manipulate width, height, margin, padding and top style properties
-                    }
-                )}
+                <Animated.FlatList
+                    data={dataSource}
+                    extraData={dataSource}
+                    keyExtractor={(_, k) => k.toString()}
+                    onEndReached={getData}
+                    ListFooterComponent={renderFooter}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={renderItem}
+                    ListHeaderComponent={renderHeader}
+                    /**
+                     * we bind the animated value to the ScrollView scroll position. 
+                     * To do that we use an Animated.event with a mapping to the event object 
+                     * property that we want to bind to the animated value.
+                     * In this case it is <eventObject>.nativeEvent.contentOffset.y
+                     * 
+                     * https://medium.com/appandflow/react-native-scrollview-animated-header-10a18cb9469e
+                     */
+                    onScroll={Animated.event(
+                        [{nativeEvent: {contentOffset: {y: scrollY}}}],
+                        {
+                            useNativeDriver: true, //this makes the animation calulation a lot faster, but you can directly animate the layout anymore. This means you cant directly manipulate width, height, margin, padding and top style properties
+                        }
+                    )}
 
-                /** 
-                * performance settings. 
-                * Read this article below to see why we set these values
-                * https://medium.com/sanjagh/how-to-optimize-your-react-native-flatlist-946490c8c49b
-                */
-                initialNumToRender={itemsToRender}
-                maxToRenderPerBatch={itemsToRender}
-                onEndReachedThreshold={1}
-                /** 
-                 * it is important that windowSize be low as possible for this usecase. it improves render time which is 
-                 * important for this article body. This is one of the important props for optimizing 
-                 * flatlist. Setting this at a low value might annoy your users that like to scroll a lot, so find a sweet spot
-                 * depending on the kind of data or UI. For article body, this will do :)
-                 */
-                windowSize={5}
-            />
+                    /** 
+                    * performance settings. 
+                    * Read this article below to see why we set these values
+                    * https://medium.com/sanjagh/how-to-optimize-your-react-native-flatlist-946490c8c49b
+                    */
+                    initialNumToRender={itemsToRender}
+                    maxToRenderPerBatch={itemsToRender}
+                    onEndReachedThreshold={1}
+                    /** 
+                     * it is important that windowSize be low as possible for this usecase. it improves render time which is 
+                     * important for this article body. This is one of the important props for optimizing 
+                     * flatlist. Setting this at a low value might annoy your users that like to scroll a lot, so find a sweet spot
+                     * depending on the kind of data or UI. For article body, this will do :)
+                     */
+                    windowSize={5}
+                />
             </Animated.View>
         </View>
     )
@@ -147,6 +148,12 @@ const styles = StyleSheet.create({
 
 const animatedStyle = {
     articleBody: scrollY => ({
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        marginVertical: detail_article_body_vertical_margin,
+        paddingLeft: detail_article_body_padding_left,
+        paddingRight: detail_article_body_padding_right,     
         transform: [
           {
               //We want to make the article body smaller as the scroll position enters negative value. 
