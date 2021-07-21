@@ -1,5 +1,5 @@
-import React from "react"
-import { View, StyleSheet, Text } from "react-native"
+import React, { useLayoutEffect, useRef } from "react"
+import { StyleSheet, Platform } from "react-native"
 import { useTheme } from "@react-navigation/native"
 import { TransitionPresets } from "@react-navigation/stack"
 import { SafeAreaView } from "react-native-safe-area-context"
@@ -11,12 +11,25 @@ import ArticleDetailFragment from "./ArticleDetailFragment"
 function ArticleDetailComponent({ route, navigation, articleItems }){
 
     const { screenContainer } = useTheme()
+    const pager = useRef(null)
 
     const { itemId } = route.params
+    /** 
+     * We set the index for Android device here.
+     * For iOS, setting the `initalPage` prop is good enough and we set undefined for android
+     * */
+    useLayoutEffect(() => {
+        pager.current?.setPageWithoutAnimation(itemId)
+    }, [])
 
     return (
         <SafeAreaView style={screenContainer} edges={["bottom", "left", "right"]}>
-            <PagerView style={styles.viewPager} initialPage={itemId}>
+            <PagerView 
+                ref={pager}
+                style={styles.viewPager}
+                initialPage={Platform.OS === "ios" ? itemId : undefined}
+                onPageSelected={e => console.log(e.nativeEvent.position)}
+            >
                 {
                     articleItems.length > 0
                     ? (
