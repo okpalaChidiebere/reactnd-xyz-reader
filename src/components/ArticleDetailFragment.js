@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from "react"
-import { View, StyleSheet, FlatList, ActivityIndicator, Dimensions } from "react-native"
+import { View, StyleSheet, ActivityIndicator, Dimensions, Animated, Text } from "react-native"
+import moment from "moment"
 import { white } from "../values/colors"
 import { ItemsColumns } from "../data/ItemsDatabase"
 import ArticleBodyListItem from "./ArticleBodyListItem"
+import AnimatedHeader from "./AnimatedHeader"
+import { detail_banner_height } from "../values/dimens"
 
 
 export default function ArticleDetailFragment({ article }){
@@ -23,6 +26,12 @@ export default function ArticleDetailFragment({ article }){
     } = Dimensions.get('window')
     const limit = 100
     const itemsToRender = SCREEN_WIDTH >= 600 ? 20 : 25
+
+    const scrollY = useRef(new Animated.Value(0)).current
+
+    const subtitle = moment(article[ItemsColumns.PUBLISHED_DATE]).format("MMMM D, YYYY")
+            + " by "
+            + article[ItemsColumns.AUTHOR]
 
     useEffect(() => {
         const body = article[ItemsColumns.BODY].replace(/\r\n|\n/g, "<br />")
@@ -51,6 +60,10 @@ export default function ArticleDetailFragment({ article }){
         )
     }
 
+    const renderHeader = () => {
+        return <View style={{ height: detail_banner_height }}/>
+    }
+
     const getData = () => {
         //more explanation to implement this lazy loading of more data here
         //https://medium.com/nerd-for-tech/flatlist-is-still-underrated-796130a8b8f2
@@ -71,7 +84,9 @@ export default function ArticleDetailFragment({ article }){
 
     return (
         <View style={[ styles.container ]}>
-            <FlatList
+            <AnimatedHeader scrollY={scrollY} title={article[ItemsColumns.TITLE]} subtitle={subtitle} uri={article[ItemsColumns.PHOTO_URL]} />
+            <Animated.View style={animatedStyle.articleBody(scrollY)}>
+            <Animated.FlatList
                 data={dataSource}
                 extraData={dataSource}
                 keyExtractor={(_, k) => k.toString()}
@@ -79,6 +94,21 @@ export default function ArticleDetailFragment({ article }){
                 ListFooterComponent={renderFooter}
                 showsVerticalScrollIndicator={false}
                 renderItem={renderItem}
+                ListHeaderComponent={renderHeader}
+                /**
+                 * we bind the animated value to the ScrollView scroll position. 
+                 * To do that we use an Animated.event with a mapping to the event object 
+                 * property that we want to bind to the animated value.
+                 * In this case it is <eventObject>.nativeEvent.contentOffset.y
+                 * 
+                 * https://medium.com/appandflow/react-native-scrollview-animated-header-10a18cb9469e
+                 */
+                onScroll={Animated.event(
+                    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+                    {
+                        useNativeDriver: true, //this makes the animation calulation a lot faster, but you can directly animate the layout anymore. This means you cant directly manipulate width, height, margin, padding and top style properties
+                    }
+                )}
 
                 /** 
                 * performance settings. 
@@ -96,6 +126,7 @@ export default function ArticleDetailFragment({ article }){
                  */
                 windowSize={5}
             />
+            </Animated.View>
         </View>
     )
 }
@@ -113,6 +144,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
 })
+
+const animatedStyle = {
+    articleBody: scrollY => ({
+        transform: [
+          {
+              //We want to make the article body smaller as the scroll position enters negative value. 
+              //The scroll position enters negative values noticably on iOS
+            translateY: scrollY.interpolate({
+              inputRange: [-detail_banner_height, 0, detail_banner_height],
+              outputRange: [detail_banner_height / 2, 0, 0],
+            }),
+          },
+        ],
+      }),
+}
 
 function splitArticleBody(text) {
     const articleBodyArrayList = []
