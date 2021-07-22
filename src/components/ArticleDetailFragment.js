@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { View, StyleSheet, ActivityIndicator, Dimensions, Animated } from "react-native"
 import moment from "moment"
 import { white } from "../values/colors"
@@ -29,6 +29,20 @@ export default function ArticleDetailFragment({ article }){
     const itemsToRender = SCREEN_WIDTH >= 600 ? 20 : 25
 
     const scrollY = useRef(new Animated.Value(0)).current
+    const instruct = useRef(new Animated.Value(0)).current
+
+    /** 
+     * Animation to bounce the article body a bit. This will let the user know that 
+     * the article bidy is scrollable
+     * 
+     * We use this to instruct the user on how to use our app. 
+     * It is called Instructive Moton
+     *  */
+    const insturctiveMotionScroll = Animated.sequence([
+        Animated.delay(600),
+        Animated.timing(instruct, { useNativeDriver: true, toValue: -10, duration: 100}),
+        Animated.spring(instruct, { useNativeDriver: true, toValue: 0, friction: 2})
+    ])
 
     const subtitle = moment(article[ItemsColumns.PUBLISHED_DATE]).format("MMMM D, YYYY")
             + " by "
@@ -38,6 +52,11 @@ export default function ArticleDetailFragment({ article }){
         const body = article[ItemsColumns.BODY].replace(/\r\n|\n/g, "<br />")
         tempArticleBodyArrayList.current = splitArticleBody(body)
         getData()
+    }, [])
+
+    useLayoutEffect(() => {
+        //we run instructive motion oce the component is dont mounting
+        insturctiveMotionScroll.start()
     }, [])
 
     const renderItem = ({ item, index }) => {
@@ -86,7 +105,7 @@ export default function ArticleDetailFragment({ article }){
     return (
         <View style={[ styles.container ]}>
             <AnimatedHeader scrollY={scrollY} title={article[ItemsColumns.TITLE]} subtitle={subtitle} uri={article[ItemsColumns.PHOTO_URL]} headerColor={article.headerColor}/>
-            <Animated.View style={animatedStyle.articleBody(scrollY)}>
+            <Animated.View style={animatedStyle.articleBody(scrollY, instruct)}>
                 <Animated.FlatList
                     data={dataSource}
                     extraData={dataSource}
@@ -107,6 +126,10 @@ export default function ArticleDetailFragment({ article }){
                     onScroll={Animated.event(
                         [{nativeEvent: {contentOffset: {y: scrollY}}}],
                         {
+                            //https://animationbook.codedaily.io/animated-event/
+                            /*listener: ({nativeEvent: {contentOffset: {y }}})=>{
+                                console.log(y)
+                            },*/
                             useNativeDriver: true, //this makes the animation calulation a lot faster, but you can directly animate the layout anymore. This means you cant directly manipulate width, height, margin, padding and top style properties
                         }
                     )}
@@ -147,7 +170,7 @@ const styles = StyleSheet.create({
 })
 
 const animatedStyle = {
-    articleBody: scrollY => ({
+    articleBody: (scrollY, instruct )=> ({
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
@@ -162,6 +185,9 @@ const animatedStyle = {
               inputRange: [-detail_banner_height, 0, detail_banner_height],
               outputRange: [detail_banner_height / 2, 0, 0],
             }),
+          },
+          {
+            translateY: instruct
           },
         ],
       }),
