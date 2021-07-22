@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { View, StatusBar, Animated, StyleSheet, Platform, Pressable } from "react-native"
 import { Ionicons as Icon } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
@@ -14,6 +14,14 @@ import { component_main } from "../values/strings"
 export default function TopNavigation ({ title, subtitle, scrollY, uri, headerColor }){
   const safeArea = useSafeAreaInsets();
   const [isTransparent, setTransparent] = useState(true)
+
+  const [headerTitleActualLines, setActualLines] = useState(1)
+
+  /** Used to measure the number of lines the Header title has for its text */
+  const onTextLayout = useCallback(e => {
+    //we get the actual number of lines for the text view
+    setActualLines(e.nativeEvent.lines.length)
+  }, [])
 
   //We pass this range to the header smaller elements we wnt to move around like title, and subtitles
   const animationRange =  scrollY.interpolate({
@@ -80,8 +88,8 @@ export default function TopNavigation ({ title, subtitle, scrollY, uri, headerCo
           style={styles.scrim}
         />
         <View style={{paddingHorizontal: 10, paddingLeft: 10}}>
-          <AnimatedText animationRange={animationRange} text={title}/>
-          <AnimatedSubtitle animationRange={animationRange} text={subtitle}/>
+          <AnimatedText animationRange={animationRange} text={title} handleOnTextLayout={onTextLayout} headerActualLines={headerTitleActualLines}/>
+          <AnimatedSubtitle animationRange={animationRange} text={subtitle} headerActualLines={headerTitleActualLines}/>
         </View>
       </Animated.View>
     </>

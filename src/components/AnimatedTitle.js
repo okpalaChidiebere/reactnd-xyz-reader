@@ -5,7 +5,7 @@ import buildTransform from "../utils/buildTransform"
 import { white } from "../values/colors"
 import { detail_title_text_size } from "../values/dimens"
 
-export default function AnimatedTitle({ animationRange, text }){
+export default function AnimatedTitle({ animationRange, text, handleOnTextLayout, headerActualLines }){
 
         const [measure, setMeasure] = useState(null)
 
@@ -17,9 +17,9 @@ export default function AnimatedTitle({ animationRange, text }){
             measure.elementY, 
             measure.elementHeight, 
             measure.elementWidth, 
-            60, 
-            -30,
-             1
+            45, 
+            -30, //how far to the up we want to move the text
+            0.7 //scale down the text a bit
         ) : null
 
         /*const animateOpacity = {
@@ -40,7 +40,14 @@ export default function AnimatedTitle({ animationRange, text }){
 
         return (
             <Animated.Text 
-                style={[styles.text, animateTextStyle ]}
+                style={[
+                    {
+                        ...styles.text, 
+                        marginTop: headerActualLines >= 2 ? -40 : 0 //for larger screen sizes, we will consider adjusting this margin based on line height as well which i did not do :)
+                    }, 
+                    animateTextStyle
+                ]}
+                onTextLayout={handleOnTextLayout}
                 onLayout={onLayoutSetMeasurements} >
                 {text}
             </Animated.Text>
@@ -53,5 +60,6 @@ const styles = StyleSheet.create({
         color: white,
         fontWeight: 'bold',
         fontFamily: "RosarioRegular",
+        paddingRight: 14,
     }
 })
