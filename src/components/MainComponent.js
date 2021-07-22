@@ -11,22 +11,24 @@ import db, { ItemsColumns } from "../data/ItemsDatabase"
 import { loadAllArticles } from "../data/ItemsSelectionBuilder"
 import ListItemArticle from "./ListItemArticle"
 import { receiveArticles } from "../actions"
+import { fetchColors } from "../remote/RemoteEndpointUtil"
 
 
 const TAG = "MainComponent"
 
 function MainComponent({ route, navigation, articleItems, dispatch }){
     const { screenContainer } = useTheme()
-    const [isRefreshing, setRefreshing] = useState(false)
+    const [isRefreshing, setRefreshing] = useState(true)
 
     const updateRefreshingUI = () => {
         setRefreshing(false)
     }
 
     const receiveNewArticlesItems = async() => {
-        setRefreshing(true)
         const newData = await loadAllArticles(db)
-        dispatch(receiveArticles(newData))
+        //fetch colors for each artcile photo which we will set for each ArtcileFragment header and safeAreaBackground(for iOS only)
+        const articlesWithColors = await fetchColors(newData)
+        dispatch(receiveArticles(articlesWithColors))
     }
 
     useEffect(() => {
@@ -37,6 +39,7 @@ function MainComponent({ route, navigation, articleItems, dispatch }){
     }, [])
 
     const refresh = async () => {
+        setRefreshing(true)
         /**
          * More ways to implment this logic
          * https://medium.com/enappd/refreshcontrol-pull-to-refresh-in-react-native-apps-dfe779118f75

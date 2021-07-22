@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react"
+import React, { useLayoutEffect, useRef, useState } from "react"
 import { StyleSheet, Platform } from "react-native"
 import { useTheme } from "@react-navigation/native"
 import { TransitionPresets } from "@react-navigation/stack"
@@ -6,12 +6,14 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import PagerView from "react-native-pager-view"
 import { connect } from "react-redux"
 import ArticleDetailFragment from "./ArticleDetailFragment"
+import { white } from "../values/colors"
 
 
 function ArticleDetailComponent({ route, navigation, articleItems }){
 
     const { screenContainer } = useTheme()
     const pager = useRef(null)
+    const [safeAreaBgColor, setSafeAreaBgColor] = useState(white)
 
     const { itemId } = route.params
     /** 
@@ -23,12 +25,15 @@ function ArticleDetailComponent({ route, navigation, articleItems }){
     }, [])
 
     return (
-        <SafeAreaView style={screenContainer} edges={["bottom", "left", "right"]}>
+        <SafeAreaView
+            style={[screenContainer, {backgroundColor: safeAreaBgColor}]}
+            edges={["bottom", "left", "right"]}
+        >
             <PagerView 
                 ref={pager}
                 style={styles.viewPager}
                 initialPage={Platform.OS === "ios" ? itemId : undefined}
-                onPageSelected={e => console.log(e.nativeEvent.position)}
+                onPageSelected={e => setSafeAreaBgColor(articleItems[e.nativeEvent.position].headerColor)}
             >
                 {
                     articleItems.length > 0

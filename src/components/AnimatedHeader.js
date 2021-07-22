@@ -10,7 +10,7 @@ import * as RootNavigation from "../utils/navigationUtils"
 import { component_main } from "../values/strings"
 
 
-export default function TopNavigation ({ title, subtitle, scrollY, uri }){
+export default function TopNavigation ({ title, subtitle, scrollY, uri, headerColor }){
   const safeArea = useSafeAreaInsets();
   const [isTransparent, setTransparent] = useState(true)
 
@@ -61,7 +61,7 @@ export default function TopNavigation ({ title, subtitle, scrollY, uri }){
         style={[
           styles.bar, 
           { 
-            backgroundColor: isTransparent ? 'transparent' : '#03A9F4', 
+            backgroundColor: isTransparent ? 'transparent' : headerColor, 
             transform: [{ translateY: headerTranslate }]
           }
         ]} 

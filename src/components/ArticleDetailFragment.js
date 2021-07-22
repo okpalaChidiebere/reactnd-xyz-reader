@@ -85,7 +85,7 @@ export default function ArticleDetailFragment({ article }){
 
     return (
         <View style={[ styles.container ]}>
-            <AnimatedHeader scrollY={scrollY} title={article[ItemsColumns.TITLE]} subtitle={subtitle} uri={article[ItemsColumns.PHOTO_URL]} />
+            <AnimatedHeader scrollY={scrollY} title={article[ItemsColumns.TITLE]} subtitle={subtitle} uri={article[ItemsColumns.PHOTO_URL]} headerColor={article.headerColor}/>
             <Animated.View style={animatedStyle.articleBody(scrollY)}>
                 <Animated.FlatList
                     data={dataSource}

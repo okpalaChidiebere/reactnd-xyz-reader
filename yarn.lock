@@ -5419,6 +5419,11 @@ react-native-pager-view@^5.2.1:
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.2.1.tgz#ad69a6035edd998771daf302830f73602e5204a9"
   integrity sha512-6aqsVr6Z4MjYP57lMwNEurlOPah0Lw34L6x+/nI6SxY+wyqZI+uaEB7sWS5EIcgQ9cGKMo925LnVWd6Xilu33A==
 
+react-native-palette-full@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-palette-full/-/react-native-palette-full-1.2.0.tgz#db912894a6dfb1352a263a2c8bcb9bdd979c3231"
+  integrity sha512-l7X96pdRGoMiS1+BXm8K1XvvezxFxA05QA68IM8PM8qvG0cV4S/EUC124UVS8TcgjMkWZpAda67Hpf8oYB5bwg==
+
 react-native-reanimated@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.2.0.tgz#a6412c56b4e591d1f00fac949f62d0c72c357c78"
