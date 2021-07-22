@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { View, StatusBar, Animated, StyleSheet, Platform, Pressable } from "react-native"
 import { Ionicons as Icon } from "@expo/vector-icons"
+import { LinearGradient } from "expo-linear-gradient"
 import { detail_banner_height, icon_size } from "../values/dimens"
 import AnimatedSubtitle from "./AnimatedSubtitle"
 import AnimatedText from "./AnimatedTitle"
@@ -71,6 +72,13 @@ export default function TopNavigation ({ title, subtitle, scrollY, uri, headerCo
           style={animatedStyle.banner(safeArea, scrollY)}
           source={{ uri }}
         />
+        <LinearGradient
+          // Background Linear Gradient
+          //i could do ["#00000000","#00000000", "#4d000000"], but i did not want the middle to be transparent
+          colors={["#00000000", "#4d000000"]}
+          start={[0.1, 0.1]}
+          style={styles.scrim}
+        />
         <View style={{paddingHorizontal: 10, paddingLeft: 10}}>
           <AnimatedText animationRange={animationRange} text={title}/>
           <AnimatedSubtitle animationRange={animationRange} text={subtitle}/>
@@ -85,7 +93,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flex: 0, 
     top: 0,
-    zIndex: 1, 
+    zIndex: 2, 
     height:detail_banner_height, 
     width:  "100%", 
     justifyContent: "flex-end",
@@ -96,9 +104,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    zIndex: 2, //the back button should appear over our appBar
+    zIndex: 3, //the back button should appear over our appBar
     marginLeft: 10,
-  }
+  },
+  scrim: {
+    position: 'absolute',
+    flex: 0, 
+    top: 0,
+    zIndex: 1,
+    width: '100%',
+    height:detail_banner_height, 
+    opacity: 0.95,
+  },
 })
 
 const animatedStyle = {
@@ -106,6 +123,7 @@ const animatedStyle = {
     position: "absolute",
     top: 0,
     flex: 0, 
+    zIndex: 0, 
     height: detail_banner_height+ safeArea.top,
     width: "100%",
     resizeMode: "cover",
