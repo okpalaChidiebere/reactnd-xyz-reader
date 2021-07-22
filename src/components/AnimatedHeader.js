@@ -39,6 +39,19 @@ export default function TopNavigation ({ title, subtitle, scrollY, uri, headerCo
     extrapolate: 'clamp',
   })
 
+  const interpolatedElevation = scrollY.interpolate({
+      inputRange: [0, detail_banner_height/2],
+      outputRange: [0, 6], //Remember the max elevation for an appBar should be 6 according to Material design
+      extrapolate: 'clamp', //dont forget to clamp. We want to stop animating at value 6
+  })
+
+  //on iOS, we want no not show any shadow when the header is at rest and gradually reveal the shadow as the user scrolls
+  const shadowOpacityIos = interpolatedElevation.interpolate({
+    inputRange: [0, 6],
+    outputRange: [0.0, 0.5],
+    //we dont have to clamp here because the parent is clamped :)
+})
+
 
   useEffect(() => {
     if (!scrollY) {
@@ -71,6 +84,16 @@ export default function TopNavigation ({ title, subtitle, scrollY, uri, headerCo
           styles.bar, 
           { 
             backgroundColor: isTransparent ? 'transparent' : headerColor, 
+            ...Platform.select({
+              ios: {
+                shadowColor: '#000',
+                shadowOffset: {width: 0, height: interpolatedElevation},
+                shadowOpacity: shadowOpacityIos,
+              },
+              android: {
+                elevation: interpolatedElevation,
+              },
+            }),
             transform: [{ translateY: headerTranslate }]
           }
         ]} 
@@ -114,6 +137,11 @@ const styles = StyleSheet.create({
     left: 0,
     zIndex: 3, //the back button should appear over our appBar
     marginLeft: 10,
+    /**
+     * Since the backbutton is not iside the `bar`, we have to explicitly 
+     * set the elevation to be atleast above the max elevation for the `bar` area
+     */
+    elevation: 7, //7 > 6, so it will always appear over the appBar
   },
   scrim: {
     position: 'absolute',
