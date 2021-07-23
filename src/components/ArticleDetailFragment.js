@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
 const animatedStyle = {
     articleBody: (scrollY, instruct )=> ({
         width: "100%",
+        marginBottom: 0,
         justifyContent: "center",
         alignItems: "center",
         marginVertical: detail_article_body_vertical_margin,
