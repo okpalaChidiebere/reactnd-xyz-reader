@@ -16,3 +16,6 @@ export const detail_title_text_size = 32
 /** Animated dimens */
 export const detail_subtitle_endY = SCREEN_WIDTH >= 600 ? 40 : 20
 
+/**Brand logo for the App in HomeScreen Header */
+export const app_header_logo_width = SCREEN_WIDTH >= 600 ? 150  : 95
+export const app_header_logo_height = SCREEN_WIDTH >= 600 ? 70  : 30

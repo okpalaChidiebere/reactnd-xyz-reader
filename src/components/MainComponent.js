@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { View, FlatList }  from "react-native"
+import { View, FlatList, Image }  from "react-native"
 import { useTheme } from "@react-navigation/native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import moment from "moment"
@@ -12,6 +12,7 @@ import { loadAllArticles } from "../data/ItemsSelectionBuilder"
 import ListItemArticle from "./ListItemArticle"
 import { receiveArticles } from "../actions"
 import { fetchColors } from "../remote/RemoteEndpointUtil"
+import { app_header_logo_height, app_header_logo_width } from "../values/dimens"
 
 
 const TAG = "MainComponent"
@@ -99,10 +100,21 @@ export default connectedMainComponent(MainComponent)
 
 export function MainComponentOptions(){
     return {
-        title: app_name,
+        title: null,
         headerTintColor: white,
         headerStyle: { 
             backgroundColor: theme_primary,
         },
+        headerLeft: () => ( 
+            <Image 
+                style={{
+                    resizeMode: "center",
+                    marginLeft: 15, 
+                    width: app_header_logo_width, 
+                    height: app_header_logo_height,
+                }} 
+                source={require("../assets/images/logo.png")}
+            />
+        ),
     }
 }
